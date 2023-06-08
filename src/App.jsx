@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import './App.css';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import Resetpassword from './component/ResetPassword';
 
 
 
@@ -31,6 +32,10 @@ function App() {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
+        sendEmailVerification(auth.currentUser)
+          .then(() => {
+            console.log("mail sent");
+          })
       })
       .catch((error) => {
         console.log(error);
@@ -41,7 +46,8 @@ function App() {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential);
+        const user = userCredential.user;
+        console.log(user.emailVerified);
       })
       .catch((error) => {
         console.log(error);
@@ -64,28 +70,32 @@ function App() {
                 <div className="card-3d-wrapper">
                   <div className="card-front">
                     <div className="center-wrap">
-                      <form onClick={signIn}>
-                        <div className="section text-center">
-                          <h4 className="mb-4 pb-3">Log In</h4>
-                          <div className="form-group">
-                            {/* login emai */}
-                            <input type="email" name="logemail" className="form-style" placeholder="Your Email" id="logemail" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)}
-                            />
-                            <i className="input-icon uil uil-at"></i>
-                          </div>
-                          <div className="form-group mt-2">
-                            {/* login password */}
-                            <input type="password" name="logpass" className="form-style" placeholder="Your Password" id="logpass" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
-                            <i className="input-icon uil uil-lock-alt"></i>
-                          </div>
-                          <div>
-                            {/* button for login */}
-                            <button type='submit' className="btn mt-4">Login</button>
-                            {/* for password */}
-                            <p className="mb-0 mt-4 text-center"><a href="#0" className="link">Forgot your password?</a></p>
-                          </div>
+
+                      <div className="section text-center">
+                        <h4 className="mb-4 pb-3">Log In</h4>
+                        <div className="form-group">
+                          {/* login emai */}
+                          <input type="email" name="logemail" className="form-style" placeholder="Your Email" id="logemail" autoComplete="off"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                          />
+                          <i className="input-icon uil uil-at"></i>
                         </div>
-                      </form>
+                        <div className="form-group mt-2">
+                          {/* login password */}
+                          <input type="password" name="logpass" className="form-style" placeholder="Your Password" id="logpass" autoComplete="off"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)} />
+                          <i className="input-icon uil uil-lock-alt"></i>
+                        </div>
+                        <div>
+                          {/* button for login */}
+                          <button type='submit' onClick={signIn} className="btn mt-4">Login</button>
+                          {/* for password reset*/}
+                          <p className="mb-0 mt-4 text-center"><a href={Resetpassword} className="link">Forgot your password?</a></p>
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                   <div className="card-back">
@@ -109,12 +119,16 @@ function App() {
                           </div>
                           <div className="form-group mt-2">
                             {/* gmail input */}
-                            <input type="email" name="logemail" className="form-style" placeholder="Your Email" id="logemail" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
+                            <input type="email" name="logemail" className="form-style" placeholder="Your Email" id="logemail" autoComplete="off"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)} />
                             <i className="input-icon uil uil-at"></i>
                           </div>
                           <div className="form-group mt-2">
                             {/* password input */}
-                            <input type="password" name="logpass" className="form-style" placeholder="Your Password" id="logpass" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <input type="password" name="logpass" className="form-style" placeholder="Your Password" id="logpass" autoComplete="off"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)} />
                             <i className="input-icon uil uil-lock-alt"></i>
                           </div>
                           <div>
